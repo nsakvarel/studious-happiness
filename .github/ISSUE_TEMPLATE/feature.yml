@@ -1,0 +1,23 @@
+name: Feature
+description: Plan a new feature (stage 01 — Plan)
+labels: [feature]
+body:
+  - type: input
+    id: tracker
+    attributes:
+      label: Jira / ADO link
+      placeholder: https://...
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Who has the problem and what does it cost them?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: Testable statements. These become the Playwright / unit tests.
+    validations:
+      required: true

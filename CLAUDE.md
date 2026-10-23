@@ -5,9 +5,14 @@ This file provides guidance for AI assistants (Claude Code and similar) working 
 ## Repository Overview
 
 **Repository:** nsakvarel/studious-happiness
-**Status:** Newly initialized — no source code committed yet.
+**Stack:** Node.js 22, TypeScript (ESM), Vitest, Playwright, deployed to Azure App Service via GitHub Actions.
 
-This repository was created with the intention of hosting a project. As development begins, this file should be updated to reflect the actual codebase structure, conventions, and workflows.
+Before any non-trivial change read, in order:
+1. `NON-NEGOTIABLES.md` — rules every change must satisfy
+2. `PLAN.md` — what we are building and why
+3. `SPEC.md` — required behavior and the acceptance-criteria → tests mapping
+
+For a new feature, use the `feature-from-spec` skill. Before opening a PR, run the `reviewer` agent.
 
 ---
 
@@ -43,7 +48,7 @@ On network failure, retry with exponential backoff: 2s → 4s → 8s → 16s (ma
 
 ### Pull Requests
 
-- Target the default branch (update this once the default branch is established)
+- Target `main`
 - PRs should include a summary of changes and a test plan
 - Do not force-push to shared or main branches
 
@@ -51,49 +56,42 @@ On network failure, retry with exponential backoff: 2s → 4s → 8s → 16s (ma
 
 ## Development Setup
 
-> This section should be updated once the project stack is decided.
-
-### Prerequisites
-
-Document required tools here (e.g., Node.js version, Python version, Docker, etc.)
-
-### Installation
+Prerequisites: Node.js 22 (`.nvmrc`).
 
 ```bash
-# Example — replace with actual setup commands
-git clone <repo-url>
-cd studious-happiness
-# install dependencies
+npm ci
+npm run dev      # http://localhost:3000, reloads on change
+npm run build && npm start
 ```
 
-### Running Locally
-
-```bash
-# Add commands to start the development server or run the application
-```
+One-time account setup (secrets, Azure, branch protection): `docs/SETUP.md`.
 
 ---
 
 ## Project Structure
 
-> Update this section as the project takes shape.
-
 ```
 studious-happiness/
-├── CLAUDE.md          # This file — AI assistant guidance
-├── README.md          # (to be created) Human-facing project documentation
-└── .git/              # Git internals
+├── CLAUDE.md, NON-NEGOTIABLES.md, PLAN.md, SPEC.md   # repository context
+├── src/app.ts          # request handler (unit-tested)
+├── src/server.ts       # HTTP entry point
+├── tests/unit/         # Vitest
+├── tests/e2e/          # Playwright
+├── .claude/skills/     # Claude skills (feature-from-spec)
+├── .claude/agents/     # Claude subagents (reviewer, test-writer)
+├── .github/workflows/  # ci, codeql, dependency-review, secret-scan, claude-review, deploy
+└── docs/SETUP.md       # manual setup steps
 ```
 
 ---
 
 ## Testing
 
-> Update this section once a test framework is chosen.
-
-- Run all tests: `# add command here`
-- Run a single test: `# add command here`
-- Tests must pass before merging to the main branch
+- Unit tests + coverage gate (80%): `npm run test:coverage`
+- Single unit test: `npx vitest run tests/unit/app.test.ts -t "reports healthy"`
+- E2E: `npm run test:e2e` (first time: `npx playwright install chromium`)
+- Every SPEC.md acceptance criterion maps to at least one test
+- Tests must pass before merging to `main`
 
 ### Guidelines
 
@@ -105,11 +103,9 @@ studious-happiness/
 
 ## Code Style and Linting
 
-> Update this section once a language and linter are chosen.
-
-- Follow the linting configuration committed to the repository
-- Run the linter before committing: `# add command here`
-- Run the formatter before committing: `# add command here`
+- Lint: `npm run lint` (ESLint + typescript-eslint)
+- Typecheck: `npm run typecheck` (strict mode)
+- Relative imports use the `.ts` extension (rewritten to `.js` on build)
 - Do not suppress lint warnings without a documented reason
 
 ---
