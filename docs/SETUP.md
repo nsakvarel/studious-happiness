@@ -4,7 +4,8 @@ The repo contains every stage that can live in code. These steps need account ac
 
 ## 0. Create `main` and make it the default branch
 The workflows trigger on `main`, but this repo's default branch is currently `claude/add-claude-documentation-CAwJT`.
-Create `main` from the merged setup branch, then **Settings → General → Default branch → `main`**.
+`main` now exists. Make it the default: **Settings → General → Default branch → `main`**.
+Until then, `@claude` comment mentions and the weekly CodeQL scan do nothing — GitHub only runs `issue_comment`, review-comment and `schedule` triggers from workflows on the default branch.
 
 ## 1. Plan / Design integrations (stages 01–02)
 - **Jira:** install *GitHub for Jira* from the Atlassian Marketplace and connect this repo. Put Jira keys (e.g. `PROJ-123`) in branch names / PR titles to link them.
@@ -22,8 +23,8 @@ CodeQL runs from `.github/workflows/codeql.yml` (use "Advanced" setup; do not al
 
 ## 4. Branch protection
 **Settings → Rules → Rulesets → New branch ruleset** targeting `main`:
-- Require a pull request, 1 approval, review from Code Owners
-- Require status checks: `Lint, typecheck, unit tests`, `Playwright e2e`, `analyze (javascript-typescript)`, `review` (dependency review), `gitleaks`
+- Require a pull request. While you are the only collaborator, set required approvals to **0** — GitHub does not let you approve your own PR, so 1 approval + Code Owner review would block every merge. Raise it to 1 + Code Owners once a second maintainer joins.
+- Require status checks: `Lint, typecheck, unit tests`, `Playwright e2e`, `analyze (javascript-typescript)`, `Dependency review`, `gitleaks` (add `Claude review` once `ANTHROPIC_API_KEY` is set)
 - Block force pushes
 
 ## 5. Azure App Service deploy (stage 07)

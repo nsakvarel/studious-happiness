@@ -17,9 +17,11 @@ permissions:
 
 jobs:
   review:
+    name: Claude review
     if: >-
       (github.event_name == 'pull_request' && !github.event.pull_request.draft
-        && github.event.pull_request.head.repo.full_name == github.repository) ||
+        && github.event.pull_request.head.repo.full_name == github.repository
+        && github.actor != 'dependabot[bot]') ||
       (github.event_name != 'pull_request' && contains(github.event.comment.body, '@claude')
         && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
     runs-on: ubuntu-latest
