@@ -26,6 +26,14 @@ jobs:
         && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association))
     runs-on: ubuntu-latest
     steps:
+      - name: Require ANTHROPIC_API_KEY
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::error::ANTHROPIC_API_KEY secret is not set, so no review ran. See docs/SETUP.md section 2."
+            exit 1
+          fi
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
